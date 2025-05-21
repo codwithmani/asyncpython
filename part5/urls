@@ -1,0 +1,72 @@
+# async_market_aggregator/main.py
+
+import asyncio
+import time
+
+from fetcher import fetch_sequential, fetch_concurrent
+
+# Constants
+MOCK_DELAY = 3
+NUM_MOCK_URLS = 30
+
+# Real API URLs
+REAL_API_URLS = [
+    "https://api4.binance.com/api/v3/ticker/24hr",
+    "https://api.coinbase.com/v2/currencies",
+    "https://api.coincap.io/v2/assets",
+    "https://api.coindesk.com/v1/bpi/currentprice.json",
+    "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd",
+    "https://api.coinlore.net/api/tickers/",
+    "https://coinmap.org/api/v1/venues/",
+    "https://api.coinpaprika.com/v1/coins/bt",
+    "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies.json",
+    "https://api.dexscreener.com/latest/dex/search?q=WBNB%20USDC",
+    "https://open.er-api.com/v6/latest/USD",
+    "https://api.geckoterminal.com/api/v2/networks",
+    "https://api.gemini.com/v2/ticker/btcusd",
+    "https://api.kraken.com/0/public/Trades?pair=ltcusd",
+    "https://api.kucoin.com/api/v1/market/stats?symbol=BTC-USDT",
+    "http://api.nbp.pl/api/cenyzlota/last/30/?format=json",
+    "https://api.n.exchange/en/api/v1/pair/",
+    "https://www.okx.com/api/v5/market/tickers?instType=SPOT",
+    "https://ifsc.razorpay.com/YESB0DNB002",
+    "https://api.wazirx.com/sapi/v1/tickers/24hr",
+]
+
+# Mock API URLs
+MOCK_API_URLS = [
+    f"https://httpbin.org/delay/{MOCK_DELAY}?mock_id={i}"
+    for i in range(NUM_MOCK_URLS)
+]
+
+# Combined list
+ALL_URLS = REAL_API_URLS + MOCK_API_URLS
+
+
+async def run_sequential():
+    """
+    Run the sequential URL fetcher and report the elapsed time.
+    """
+    print("Running sequential fetcher...")
+    start = time.time()
+    results = await fetch_sequential(ALL_URLS)
+    elapsed = time.time() - start
+    print(f"Sequential fetch completed in {elapsed:.2f} seconds\n")
+    return results
+
+
+async def run_concurrent():
+    """
+    Run the concurrent URL fetcher and report the elapsed time.
+    """
+    print("Running concurrent fetcher...")
+    start = time.time()
+    results = await fetch_concurrent(ALL_URLS)
+    elapsed = time.time() - start
+    print(f"Concurrent fetch completed in {elapsed:.2f} seconds\n")
+    return results
+
+
+if __name__ == "__main__":
+    asyncio.run(run_sequential())
+    asyncio.run(run_concurrent())
